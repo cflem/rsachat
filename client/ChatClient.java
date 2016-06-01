@@ -17,6 +17,16 @@ public class ChatClient {
 		this.port = port;
 		this.sockfd = null;
 	}
+
+	public void endConnect () {
+		try {
+			BufferedOutputStream bos = new BufferedOutputStream(sockfd.getOutputStream());
+			bos.write("DIE".getBytes());
+			bos.flush();
+			sockfd.close();
+			ui.disconnect();
+		} catch (Exception e) {}
+	}
 	
 	public void login (String username, RSAPrivateKey userkey) throws IOException {
 		try {
@@ -30,20 +40,20 @@ public class ChatClient {
 			bos.flush();
 			Arrays.fill(buffer, (byte)0);
 			bis.read(buffer);
-			if (new String(buffer).trim().equalsIgnoreCase("GET OUT")) return;
+			if (new String(buffer).trim().equalsIgnoreCase("GET OUT")) throw new IOException("Kicked by server.");;
 			// buffer is now full of the authentication key, but encrypted
 			authkey = rsaunpad(padNum(RSABase.decryptBlock(buffer, userkey), (userkey.getSize()/8)-1));
 			bos.write(authkey);
 			bos.flush();
 			Arrays.fill(buffer, (byte)0);
 			bis.read(buffer);
-			if (!new String(buffer).trim().equalsIgnoreCase("OK")) return;
+			if (!new String(buffer).trim().equalsIgnoreCase("OK")) throw new IOException("Didn't get the OK.");
 			baseProtocol();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return;
 		} finally {
-			ui.disconnect();
-			sockfd.close();
+			endConnect();
 		}
 	}
 	
@@ -59,13 +69,13 @@ public class ChatClient {
 			bos.flush();
 			Arrays.fill(buffer, (byte)0);
 			bis.read(buffer);
-			if (!new String(buffer).trim().equalsIgnoreCase("SEND")) return;
+			if (!new String(buffer).trim().equalsIgnoreCase("SEND")) throw new IOException("Protocol breach: did not receive SEND.");;
 			byte[] mod = padNum(userkey.getMod().toByteArray(), userkey.getSize()/8);
 			bos.write(mod);
 			bos.flush();
 			Arrays.fill(buffer, (byte)0);
 			bis.read(buffer);
-			if (!new String(buffer).trim().equalsIgnoreCase("GOT")) return;
+			if (!new String(buffer).trim().equalsIgnoreCase("GOT")) throw new IOException("Server failed to get key.");
 			byte[] pE = userkey.getPublicExponent().toByteArray();
 			pE = padNum(padNum(pE, pE.length), 16);
 			bos.write(pE);
@@ -77,14 +87,13 @@ public class ChatClient {
 			bos.flush();
 			Arrays.fill(buffer, (byte)0);
 			bis.read(buffer);
-			if (!new String(buffer).trim().equalsIgnoreCase("OK")) return;
+			if (!new String(buffer).trim().equalsIgnoreCase("OK")) throw new IOException("Did not receive the OK from server.");
 			baseProtocol();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		} finally {
-			ui.disconnect();
-			sockfd.close();
+			endConnect();
 		}
 	}
 	
@@ -111,8 +120,8 @@ public class ChatClient {
 			bos.write(buffer);
 			bos.flush();
 		} catch (IOException e) {
-			ui.disconnect();
-			sockfd.close();
+			e.printStackTrace();
+			endConnect();
 		}
 	}
 	
@@ -136,11 +145,11 @@ public class ChatClient {
 			String msg = new String(Arrays.copyOfRange(buffer, 8+senderlen, 8+senderlen+msglen));
 			ui.displayMessage(sender, msg);
 		}
-		return;
+		throw new IOException("Socket problems.");
 	}
 	
 	private void encrypt (byte[] data, byte[] key) { // this is a play on the vigenere
-		if (key.length < 1) System.out.println("No key found.");
+		if (key.length < 1) return;
 		for (int i = 0; i < data.length; i++) {
 			data[i] ^= key[i%key.length];
 		}

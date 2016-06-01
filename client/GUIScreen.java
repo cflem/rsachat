@@ -36,9 +36,10 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		this.ui = ui;
 		this.messageScreens = new HashMap<String, String>();
 		this.screens = new ArrayList<String>();
+    this.currScreen = "";
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1024, 768);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setSize(800, 600);
 		setTitle("RSAChat");
 		setResizable(false);
 		JPanel glob = new JPanel();
@@ -48,7 +49,7 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		JPanel scrright = new JPanel();
 		JScrollPane jsp = new JScrollPane(scrleft);
 		jsp.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		jsp.setPreferredSize(new Dimension(256, 768));
+		jsp.setPreferredSize(new Dimension(200, 600));
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		c.weightx = .25;
@@ -56,7 +57,7 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		c.gridy = 0;
 		c.fill = GridBagConstraints.VERTICAL;
 		glob.add(jsp, c);
-		scrright.setPreferredSize(new Dimension(768, 768));
+		scrright.setPreferredSize(new Dimension(600, 600));
 		scrright.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		c.weightx = .75;
 		c.gridx = 1;
@@ -85,13 +86,13 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		scrollmsg.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollmsg.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollmsg.setViewportView(msgList);
-		scrollmsg.setPreferredSize(new Dimension(768, 718));
+		scrollmsg.setPreferredSize(new Dimension(600, 578));
 		scrright.add(scrollmsg);
 		
-		scrright.add(Box.createRigidArea(new Dimension(768, 5)));
+		scrright.add(Box.createRigidArea(new Dimension(600, 5)));
 		
 		typing = new JTextField();
-		typing.setPreferredSize(new Dimension(740, 23));
+		typing.setPreferredSize(new Dimension(580, 23));
 		typing.setEnabled(false);
 		typing.addKeyListener(this);
 		scrright.add(typing);

@@ -1,4 +1,6 @@
 import javax.swing.JOptionPane;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 public class GUI extends UserInterface {
@@ -9,9 +11,17 @@ public class GUI extends UserInterface {
 	}
 
 	public void run () {
-		startRunner("awq.thegt.org", 4044);
+		startRunner("localhost", 4044);
 		screen = new GUIScreen(this);
 		screen.setVisible(true);
+		screen.addWindowListener(new WindowAdapter() {
+			public void windowClosing (WindowEvent evt) {
+				try {
+					cli.endConnect();
+					System.exit(0);
+				} catch (Exception e) {}
+			}
+		});	
 	}
 
 	public String unamePrompt () {
@@ -19,8 +29,10 @@ public class GUI extends UserInterface {
 	}
 
 	public void displayMessage (String sender, String message) {
-		System.out.println(sender+": "+message);
-		screen.displayMessage(sender, message);
+		try {
+			while (screen == null) Thread.sleep(1000); // wait it out
+			screen.displayMessage(sender, message);
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 
 	public void disconnect () {

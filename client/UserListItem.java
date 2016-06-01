@@ -12,15 +12,15 @@ public class UserListItem extends JPanel {
 	private String uname;
 	
 	public UserListItem (String userText) {
-		size = new Dimension(250, 64);
+		size = new Dimension(194, 60);
 		uname = userText;
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 		setBackground(Color.WHITE);
 		JLabel txt = new JLabel(userText);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		txt.setAlignmentX(CENTER_ALIGNMENT);
-		txt.setFont(getFont().deriveFont(24.0F));
-		add(Box.createRigidArea(new Dimension(250, 15)));
+		txt.setFont(getFont().deriveFont(22.0F));
+		add(Box.createRigidArea(new Dimension(194, 15)));
 		add(txt);
 	}
 

@@ -124,6 +124,9 @@ void cliloop (int sockfd) {
       else return;
     }
     pos += len;
+    if (pos >= 3) {
+      if (strncmp(buffer, "DIE", 3) == 0) {printf("ded\n"); return;}
+    }
     if (pos >= 8) {
       decrypt(buffer, len, authkey, aklen);
       int usrlen = ntohl(*((int*)buffer));
@@ -158,6 +161,9 @@ int waitformsg (int sockfd, char* buff, int len, int waitfor) {
   while (pos < waitfor && n >= 0) {
     n = read(sockfd, &buff[pos], len-pos);
     pos += n;
+    if (pos >= 3) {
+      if (strncmp(buff, "DIE", 3) == 0) {printf("Ded\n"); return -1;} // client disconnect
+    }
   }
   return pos;
 }
