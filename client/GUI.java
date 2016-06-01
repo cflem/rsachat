@@ -11,7 +11,7 @@ public class GUI extends UserInterface {
 	}
 
 	public void run () {
-		startRunner("localhost", 4044);
+		startRunner("awq.thegt.org", 4044);
 		screen = new GUIScreen(this);
 		screen.setVisible(true);
 		screen.addWindowListener(new WindowAdapter() {
