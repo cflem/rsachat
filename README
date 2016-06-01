@@ -1,0 +1,35 @@
+[ RSAChat Overview ]
+This is a server/client suite for personal private messaging.
+Authors: Carson Fleming, Vinayak Kurup
+
+This is a real final version with a working GUI that has undergone some
+hefty debugging. This suite uses users' RSA keys to verify their identity
+and exchange keys for a symmetric cipher that protects the messages. Unlike
+the beta version, this version is fully equipped, with RSA enabled an a
+working GUI (which may be platform-dependent in some cases.)
+
+This application works a lot like iMessage in that messages are sent
+directly to one user as opposed to a lobby, and if that user is offline,
+the messages will be fetched when they come back on.
+
+[ Running the Client ]
+The server is hardcoded to one that is running on my VPS for the testing
+and peer review portion of development. To change the server or port, simply
+change the run method in whichever User Interface (GUI, AntiG_UI, or a
+custom one) you choose to use.
+
+[ Running Your Own Server ]
+In order to run a server of your own, you will need to compile the code in
+server/ which can be done with the command:
+  make
+The server is heavily platform-dependent, and is only known to work on
+linux-based systems, although OSX systems may work as well. Running the
+server takes no arguments and can be done with:
+  ./server
+To change the port or the bind address, simply alter the main method in
+the file chatsvr.c.
+
+[ About the Default Server ]
+The default server is running on a very low-end VPS of mine (Carson's) and
+can't take much load, so if you plan on nuking the server, please do me a
+solid and run your own for stuff like that.
