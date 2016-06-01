@@ -128,7 +128,7 @@ void cliloop (int sockfd) {
       if (strncmp(buffer, "DIE", 3) == 0) {printf("ded\n"); return;}
     }
     if (pos >= 8) {
-      decrypt(buffer, len, authkey, aklen);
+      bigvig_decrypt(buffer, len, authkey, aklen);
       int usrlen = ntohl(*((int*)buffer));
       if (usrlen+8 > 256) return;
       char uname[usrlen+1];
@@ -194,7 +194,7 @@ void dispatch_msg (msg_t* msg, int sockfd, unsigned char* authkey, int aklen) {
   *((int*)(&buffer[4+slen])) = htonl(mlen);
   if (slen+mlen+4 > 512) return;
   strncpy(&buffer[8+slen], msg->msg, mlen);
-  encrypt(buffer, 512, authkey, aklen);
+  bigvig_encrypt(buffer, 512, authkey, aklen);
   if (write(sockfd, buffer, 512) < 0) return;
 }
 

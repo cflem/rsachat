@@ -32,13 +32,13 @@ uchar* rsa_encrypt (pubkey_t key, uchar* data, int dlen) {
   return buff;
 }
 
-void encrypt (uchar* data, int dlen, uchar* key, int klen) {
+void bigvig_encrypt (uchar* data, int dlen, uchar* key, int klen) {
   int i;
   for (i = 0; i < dlen; i++) {
     data[i] = data[i] ^ key[i%klen];
   }
 }
 
-void decrypt (uchar* d, int dl, uchar* k, int kl) {
-  encrypt(d, dl, k, kl);
+void bigvig_decrypt (uchar* d, int dl, uchar* k, int kl) {
+  bigvig_encrypt(d, dl, k, kl);
 }
