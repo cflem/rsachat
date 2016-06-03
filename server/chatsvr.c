@@ -1,25 +1,69 @@
 #include "chatsvr.h"
 
 int main (int argc, char** argv) {
+  // ./server [port[ svrlog[ errorlog[ bind_addr]]]]
+  int port = 4044;
+
+  char *svrlog, *errlog;
+  if (argc > 1) port = atoi(argv[1]);
+  if (argc > 2) svrlog = argv[2];
+  if (argc > 3) errlog = argv[3];
+  
 // make a runnable eventually
-  startsvr(INADDR_ANY, 4044);
+  startsvr((argc < 5) ? "0.0.0.0" : argv[4], 4044, svrlog, errlog);
 }
 
-void startsvr (unsigned long inaddr, int port) {
+int find_af (char* addr) {
+  int i;
+  for (i = 0; addr[i] != 0; i++) {
+    if ('0' <= addr[i] && addr[i] <= '9') continue;
+    if ('a' <= addr[i] && addr[i] <= 'f') return AF_INET6; // no hex in ipv4
+    if ('A' <= addr[i] && addr[i] <= 'F') return AF_INET6;
+    if (addr[i] == '.') return AF_INET;
+    if (addr[i] == ':') return AF_INET6;
+    return IDK_AF;
+  }
+  return IDK_AF;
+}
+
+void startsvr (char* inaddr, int port, char* svrlog, char* errlog) {
   int sockfd;
-  struct sockaddr_in serv_addr;
+  struct sockaddr serv_addr;
 
   table = calloc(TABLE_SIZE, sizeof(link_t*));
 
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (sockfd < 0) errorquit("Failed to open socket.");
+  int fam = find_af(inaddr);
+  if (fam == IDK_AF) errorquit("Quit: Bad bind address.");
+  sockfd = socket(fam, SOCK_STREAM, 0);
+  if (sockfd < 0) errorquit("Quit: Failed to open socket.");
 
   memset((char*) &serv_addr, 0, sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = inaddr;
-  serv_addr.sin_port = htons(port);
+  if (fam == AF_INET) {
+    struct sockaddr_in serv_addr4;
+    memset(&serv_addr4, 0, sizeof(serv_addr4));
+    serv_addr4.sin_family = AF_INET;
+    serv_addr4.sin_port = htons(port);
+    if (inet_pton(AF_INET, inaddr, &(serv_addr4.sin_addr)) < 1) errorquit("Quit: Could not resolve bind address.");
+    memcpy(&serv_addr, &serv_addr4, sizeof(serv_addr));
+  } else {
+    struct sockaddr_in6 serv_addr6;
+    memset(&serv_addr6, 0, sizeof(serv_addr6));
+    serv_addr6.sin6_family = AF_INET6;
+    serv_addr6.sin6_port = htons(port);
+    if (inet_pton(AF_INET6, inaddr, &(serv_addr6.sin6_addr)) < 1) errorquit("Quit: Could not resolve bind address.");
+    memcpy(&serv_addr, &serv_addr6, sizeof(serv_addr));
+  }
 
-  if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) < 0) errorquit("Could not bind socket to port.");
+  if (bind(sockfd, &serv_addr, sizeof(serv_addr)) < 0) errorquit("Quit: Could not bind socket to port.");
+  daemon(0, 0);
+  if (svrlog == 0) svrlog = "server.log";
+  int logfd = open(svrlog, O_WRONLY | O_APPEND | O_CREAT, 0644);
+  int errfd;
+  if (errlog == 0) errfd = logfd;
+  else errfd = open(errlog, O_WRONLY | O_APPEND | O_CREAT, 0644);
+  dup2(logfd, fileno(stdout));
+  dup2(errfd, fileno(stderr));
+
   listen(sockfd, 5);
 
   while (1) {

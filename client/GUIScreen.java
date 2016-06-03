@@ -49,7 +49,7 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		JPanel scrright = new JPanel();
 		JScrollPane jsp = new JScrollPane(scrleft);
 		jsp.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		jsp.setPreferredSize(new Dimension(200, 600));
+		jsp.setPreferredSize(new Dimension(190, 590));
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		c.weightx = .25;
@@ -57,7 +57,7 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		c.gridy = 0;
 		c.fill = GridBagConstraints.VERTICAL;
 		glob.add(jsp, c);
-		scrright.setPreferredSize(new Dimension(600, 600));
+		scrright.setPreferredSize(new Dimension(590, 590));
 		scrright.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		c.weightx = .75;
 		c.gridx = 1;
@@ -86,13 +86,13 @@ public class GUIScreen extends JFrame implements MouseListener, KeyListener {
 		scrollmsg.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollmsg.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollmsg.setViewportView(msgList);
-		scrollmsg.setPreferredSize(new Dimension(600, 578));
+		scrollmsg.setPreferredSize(new Dimension(590, 568));
 		scrright.add(scrollmsg);
 		
-		scrright.add(Box.createRigidArea(new Dimension(600, 5)));
+		scrright.add(Box.createRigidArea(new Dimension(590, 5)));
 		
 		typing = new JTextField();
-		typing.setPreferredSize(new Dimension(580, 23));
+		typing.setPreferredSize(new Dimension(570, 23));
 		typing.setEnabled(false);
 		typing.addKeyListener(this);
 		scrright.add(typing);

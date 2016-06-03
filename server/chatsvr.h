@@ -9,7 +9,8 @@
 int main (int argc, char** argv);
 void* wrap_cloop (void* args); // for pthreads
 void cliloop (int sockfd);
-void startsvr (unsigned long inaddr, int port); // Should default to INADDR_ANY, 4045
+int find_af (char* addr);
+void startsvr (char* inaddr, int port, char* svrlog, char* errlog);
 char* keygen (int size);
 void addmsg(char* to, char* from, char* msg);
 int waitformsg (int sockfd, char* buff, int len, int waitfor);

@@ -12,7 +12,7 @@ public class UserListItem extends JPanel {
 	private String uname;
 	
 	public UserListItem (String userText) {
-		size = new Dimension(194, 60);
+		size = new Dimension(184, 60);
 		uname = userText;
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 		setBackground(Color.WHITE);
